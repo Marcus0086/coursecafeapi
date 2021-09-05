@@ -1,4 +1,6 @@
-const ApiRouter = require('./ApiRouter');
+const StudentRouter = require('./StudentRouter');
+const PublicRouter = require('./PublicRouter');
 module.exports = {
-    ApiRouter: ApiRouter
+    StudentRouter: StudentRouter,
+    PublicRouter: PublicRouter,
 }
