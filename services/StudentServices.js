@@ -25,24 +25,48 @@ module.exports = {
             res.status(500).send(e);
         }
     },
-    webSignup: async (req, res) => {
+    StudentLogin: async (req, res) => {
+        const { email, password } = req.body;
+        try {
+            if (email !== undefined && password !== undefined) {
+                const pool = await poolPromise;
+                const userLogin = await pool.request()
+                    .input('Email', sql.NVarChar(50), email)
+                    .input('Password', sql.NVarChar(50), password)
+                    .execute('dba_coursecafe.SPAPI_StudentLogin');
+                    console.log(Object.keys(userLogin.recordsets[0][0]).length)
+                    // console.log(Object.size())
+                if (Object.keys(userLogin.recordsets[0][0]).length > 2) {
+                    res.status(200).send({status: 'Success', message: `Login SuccessFul`,data:[ ...toLowerKeys(userLogin.recordsets[0])][0] })
+                    // {status: 'Success', message: `Login SuccessFul`,data:[ ...toLowerKeys(userLogin.recordsets[0])][0] }
+                } else {
+                    res.status(400).send({ status: 'Fail', message: `Invalid Credentials` });
+                }
+            } else {
+                res.status(400).send({ message: 'Email and password is required' });
+            }
+        } catch (e) {
+            console.log(e);
+            res.status(500).send(e);
+        }
+    },
+    StudentSignup: async (req, res) => {
         const { name,email,password } = req.body;
         try {
             if (name !== undefined && email != undefined && password !== undefined) {
                 const pool = await poolPromise;
                 const userSignUp = await pool.request()
-                    .input('UserType',sql.VarChar(50), 'Student')
-                    .input('Name', sql.VarChar(50), name)
+                    .input('StudentName', sql.VarChar(50), name)
                     .input('Email', sql.VarChar(50), email)
                     .input('Password', sql.VarChar(50), password)
-                    .execute('dba_coursecafe.SP_WebSignup');
+                    .execute('dba_coursecafe.SPAPI_StudentSignup');
                 if (userSignUp.recordsets[0].length > 0) {
                     res.status(200).send({ ...toLowerKeys(userSignUp.recordsets[0][0]) })
                 } else {
                     res.status(400).send({ status: 'Fail', message: `Data not found` });
                 }
             } else {
-                res.status(400).send({ message: 'Username and password is required' });
+                res.status(400).send({ message: 'Studentname, Email and password is required' });
             }
         } catch (e) {
             console.log(e);
@@ -108,12 +132,14 @@ module.exports = {
                 const pool = await poolPromise;
                 const mycourses = await pool.request()
                     .input('StudentID', sql.Int, studentid)
-                    .execute('dba_coursecafe.SP_StudentMyCourses');
+                    .execute('dba_coursecafe.SPAPI_StudentDashBoard');
                 if (mycourses.recordsets[0].length > 0) {
                     res.status(200).send({
-                        status: 'success', message: 'Data loaded Successfully', data: [
-                            ...toLowerKeys(mycourses.recordsets)
-                        ]
+                        status: 'success', message: 'Data loaded Successfully', data: {
+                             "upcomingClasses":[...toLowerKeys(mycourses.recordsets)[0]],
+                            "ongoingCourses":[...toLowerKeys(mycourses.recordsets)[1]],
+                            "completedCourses":[...toLowerKeys(mycourses.recordsets)[2]]
+                        }
                     })
                 } else {
                     res.status(400).send({ status: 'Fail', message: `Data not found` });
