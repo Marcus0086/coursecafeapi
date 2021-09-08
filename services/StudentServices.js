@@ -152,4 +152,68 @@ module.exports = {
             res.status(500).send(e);
         }
     },
+    profileSelect: async (req, res) => {
+        const { studentid } = req.body;
+        console.log(studentid)
+        try {
+            if (studentid !== undefined) {
+                const pool = await poolPromise;
+                const mycourses = await pool.request()
+                    .input('StudentID', sql.Int, studentid)
+                    .execute('dba_coursecafe.SPAPI_StudentProfileSelect');
+                console.log(mycourses.recordsets)
+                if (mycourses.recordsets[0].length > 0) {
+                    res.status(200).send({
+                        status: 'success', message: 'Data loaded Successfully', data: {
+                            "profiledata":[...toLowerKeys(mycourses.recordsets)[0]][0],
+                            "language":[...toLowerKeys(mycourses.recordsets)[1]]
+                        }
+                    })
+                } else {
+                    res.status(400).send({ status: 'Fail', message: `Data not found` });
+                }
+            } else {
+                res.status(400).send({ message: 'Student id is required' });
+            }
+        } catch (e) {
+            console.log(e);
+            res.status(500).send(e);
+        }
+    },
+    profileUpdate: async (req, res) => {
+        const { studentid,studentname,about,address, email,modifiedon,profilepic,age,mobile,dob,language } = req.body;
+        console.log(studentid,studentname,about,address, email,modifiedon,profilepic,age,mobile,dob,language)
+        try {
+            if (studentid !== undefined) {
+                const pool = await poolPromise;
+                const mycourses = await pool.request()
+                    .input('StudentID', sql.Int, studentid)
+                    .input('StudentName', sql.VarChar, studentname)
+                    .input('About', sql.VarChar, about)
+                    .input('Address', sql.VarChar, address)
+                    .input('Email', sql.VarChar, email)
+                    .input('ModifiedOn', sql.Date, modifiedon)
+                    .input('profilePicPath', sql.VarChar, profilepic)
+                    .input('Age', sql.Int, age)
+                    .input('Mobile', sql.Int, mobile)
+                    .input('DOB', sql.Date, dob)
+                    .input('Language', sql.VarChar, language)
+                    .execute('dba_coursecafe.SPAPI_StudentProfileUpdate');
+                
+                    console.log(mycourses)
+                if (mycourses.recordsets[0].length > 0) {
+                    res.status(200).send({
+                        status: 'success', message: 'Data Updated Successfully', data: {...toLowerKeys(mycourses.recordsets)[0]}
+                    })
+                } else {
+                    res.status(400).send({ status: 'Fail', message: `Data not found` });
+                }
+            } else {
+                res.status(400).send({ message: 'Student id is required' });
+            }
+        } catch (e) {
+            console.log(e);
+            res.status(500).send(e);
+        }
+    },
 }

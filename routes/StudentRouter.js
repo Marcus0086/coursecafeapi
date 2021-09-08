@@ -10,5 +10,7 @@ router.route('/mycourseinside').get(ApiService.mycoursesInside);
 router.route('/studentLogin').post(ApiService.StudentLogin);
 router.route('/studentSignup').post(ApiService.StudentSignup);
 router.route('/dashboard').get(ApiService.dashBoard);
+router.route('/profile').post(ApiService.profileSelect);
+router.route('/profileEdit').post(ApiService.profileUpdate);
 
 module.exports = router;
