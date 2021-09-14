@@ -6,4 +6,4 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/student', Router.StudentRouter);
 app.use('/api/public', Router.PublicRouter);
-app.listen(8000, () => console.log('Server is running at port:3000'));
+app.listen(8000, () => console.log('Server is running at port:8000'));

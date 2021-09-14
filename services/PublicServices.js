@@ -41,5 +41,26 @@ module.exports = {
             console.log(e);
             res.status(500).send(e);
         }
+    },
+    courseDetails: async (req, res) => {
+        const { courseid } = req.query;
+        try {
+            const pool = await poolPromise;
+            const mycourses = await pool.request()
+                .input('courseid', sql.Int, courseid)
+                .execute('API_CourseDetails');
+            if (mycourses.recordsets[0].length > 0) {
+                res.status(200).send({
+                    status: 'success', message: 'Data found', data: [
+                        ...toLowerKeys(mycourses.recordsets[0])
+                    ]
+                })
+            } else {
+                res.status(400).send({ status: 'Fail', message: `Data not found` });
+            }
+        } catch (e) {
+            console.log(e);
+            res.status(500).send(e);
+        }
     }
 }

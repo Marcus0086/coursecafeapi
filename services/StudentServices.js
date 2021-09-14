@@ -4,12 +4,12 @@ const { toLowerKeys } = require('./utils/toLowerKeys');
 
 module.exports = {
     webLogin: async (req, res) => {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
         try {
-            if (username !== undefined && password !== undefined) {
+            if (email !== undefined && password !== undefined) {
                 const pool = await poolPromise;
                 const userLogin = await pool.request()
-                    .input('Username', sql.NVarChar(50), username)
+                    .input('Username', sql.NVarChar(50), email)
                     .input('Password', sql.NVarChar(50), password)
                     .execute('dbo.SPWeb_Login');
                 if (userLogin.recordsets[0].length > 0) {
