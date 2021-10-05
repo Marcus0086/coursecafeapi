@@ -1,16 +1,18 @@
 require('dotenv').config();
 const config = {
-    user: 'usr',
-    password: 'raghavgu',
-    server: '127.0.0.1',
+    user: 'dba_coursecafe',
+    password: 'ATSPL@Aco007!',
+    server: '103.48.51.194',
     database: 'DB_CourseCafe',
+    requestTimeout: 300000,
     options: {
         trustedconnection: true,
         trustServerCertificate: true,
         enableArithAbort: true,
-        instancename: 'SQLEXPRESS'
+        instancename: 'SQLEXPRESS',
+        encrypt: false
     },
-    port: 51586
+    port: 1232
 };
 
 module.exports = config;
